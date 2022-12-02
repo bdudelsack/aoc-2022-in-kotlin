@@ -1,59 +1,65 @@
-fun main() {
-    fun calculateOutcome(player1: Char, player2: Char) = when(player1) {
-        'A' -> {
-            when(player2) {
-                'X' -> { 3 }
-                'Y' -> { 6 }
-                'Z' -> { 0 }
-                else -> throw Exception("Wrong input")
-            }
-        }
-        'B' -> {
-            when(player2) {
-                'X' -> { 0 }
-                'Y' -> { 3 }
-                'Z' -> { 6 }
-                else -> throw Exception("Wrong input")
-            }
-        }
-        'C' -> {
-            when(player2) {
-                'X' -> { 6 }
-                'Y' -> { 0 }
-                'Z' -> { 3 }
-                else -> throw Exception("Wrong input")
-            }
-        }
-        else -> throw Exception("Wrong input")
+enum class PlayerOne(val hand: Char) {
+    ROCK('A'),
+    PAPER('B'),
+    SCISSORS('C');
+
+    companion object {
+        infix fun of(hand: Char) = PlayerOne.values().first { it.hand == hand }
+    }
+}
+
+enum class PlayerTwo(val hand: Char) {
+    ROCK('X'),
+    PAPER('Y'),
+    SCISSORS('Z');
+
+    companion object {
+        infix fun of(hand: Char) = PlayerTwo.values().first { it.hand == hand }
     }
 
-    fun chooseHand(player1: Char, outcome: Char): Char {
-        return when(outcome) {
-            'X' -> {
-                when(player1) {
-                    'A' -> { 'Z' }
-                    'B' -> { 'X' }
-                    'C' -> { 'Y' }
-                    else -> throw Exception("Wrong input")
-                }
-            } // Loose
-            'Y' -> player1 - 'A'.code + 'X'.code // Draw
-            'Z' -> {
-                when(player1) {
-                    'A' -> { 'Y' }
-                    'B' -> { 'Z' }
-                    'C' -> { 'X' }
-                    else -> throw Exception("Wrong input")
-                }
-            } // Win
-            else -> throw Exception("Wrong input")
-        }
+    fun score() = ordinal + 1
+}
+
+enum class Outcome(val outcome: Char, val score: Int) {
+    LOOSE('X', 0),
+    DRAW('Y', 3),
+    WIN('Z', 6);
+
+    companion object {
+        infix fun of(outcome: Char) = Outcome.values().first { it.outcome == outcome }
+    }
+}
+
+val table = mapOf(
+    PlayerOne.ROCK to PlayerTwo.ROCK to Outcome.DRAW,
+    PlayerOne.PAPER to PlayerTwo.PAPER to Outcome.DRAW,
+    PlayerOne.SCISSORS to PlayerTwo.SCISSORS to Outcome.DRAW,
+
+    PlayerOne.ROCK to PlayerTwo.PAPER to Outcome.WIN,
+    PlayerOne.PAPER to PlayerTwo.SCISSORS to Outcome.WIN,
+    PlayerOne.SCISSORS to PlayerTwo.ROCK to Outcome.WIN,
+
+    PlayerOne.PAPER to PlayerTwo.ROCK to Outcome.LOOSE,
+    PlayerOne.SCISSORS to PlayerTwo.PAPER to Outcome.LOOSE,
+    PlayerOne.ROCK to PlayerTwo.SCISSORS to Outcome.LOOSE,
+)
+
+fun main() {
+    fun calculateOutcome(p1: PlayerOne, p2: PlayerTwo): Int {
+        val res =  table[p1 to p2]
+        return res?.score?.let { it + p2.score() } ?: throw Exception("Invalid input")
+    }
+
+    fun chooseHand(player1: PlayerOne, outcome: Outcome): PlayerTwo {
+        return table.entries.first {
+            it.value == outcome && it.key.first == player1
+        }.key.second
     }
 
     fun part1(lines: List<String>): Int {
         val res = lines.map {
             val (p1, p2) = it.split(" ").map { s ->  s.first() }
-            calculateOutcome(p1, p2) + 3 - ('Z' - p2)
+            calculateOutcome(PlayerOne of p1, PlayerTwo of p2)
         }
 
         return res.sum()
@@ -62,8 +68,8 @@ fun main() {
     fun part2(lines: List<String>): Int {
         val res = lines.map {
             val (p1, outcome) = it.split(" ").map { s ->  s.first() }
-            val p2 = chooseHand(p1, outcome)
-            calculateOutcome(p1, p2) + 3 - ('Z' - p2)
+            val p2 = chooseHand(PlayerOne of p1, Outcome of outcome)
+            calculateOutcome(PlayerOne of p1, p2)
         }
 
         return res.sum()
