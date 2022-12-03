@@ -1,3 +1,7 @@
+package day02
+
+import readInput
+
 enum class PlayerOne(val hand: Char) {
     ROCK('A'),
     PAPER('B'),
@@ -44,42 +48,42 @@ val table = mapOf(
     PlayerOne.ROCK to PlayerTwo.SCISSORS to Outcome.LOOSE,
 )
 
+fun calculateOutcome(p1: PlayerOne, p2: PlayerTwo): Int {
+    val res =  table[p1 to p2]
+    return res?.score?.let { it + p2.score() } ?: throw Exception("Invalid input")
+}
+
+fun chooseHand(player1: PlayerOne, outcome: Outcome): PlayerTwo {
+    return table.entries.first {
+        it.value == outcome && it.key.first == player1
+    }.key.second
+}
+
+fun part1(lines: List<String>): Int {
+    val res = lines.map {
+        val (p1, p2) = it.split(" ").map { s ->  s.first() }
+        calculateOutcome(PlayerOne of p1, PlayerTwo of p2)
+    }
+
+    return res.sum()
+}
+
+fun part2(lines: List<String>): Int {
+    val res = lines.map {
+        val (p1, outcome) = it.split(" ").map { s ->  s.first() }
+        val p2 = chooseHand(PlayerOne of p1, Outcome of outcome)
+        calculateOutcome(PlayerOne of p1, p2)
+    }
+
+    return res.sum()
+}
+
 fun main() {
-    fun calculateOutcome(p1: PlayerOne, p2: PlayerTwo): Int {
-        val res =  table[p1 to p2]
-        return res?.score?.let { it + p2.score() } ?: throw Exception("Invalid input")
-    }
-
-    fun chooseHand(player1: PlayerOne, outcome: Outcome): PlayerTwo {
-        return table.entries.first {
-            it.value == outcome && it.key.first == player1
-        }.key.second
-    }
-
-    fun part1(lines: List<String>): Int {
-        val res = lines.map {
-            val (p1, p2) = it.split(" ").map { s ->  s.first() }
-            calculateOutcome(PlayerOne of p1, PlayerTwo of p2)
-        }
-
-        return res.sum()
-    }
-
-    fun part2(lines: List<String>): Int {
-        val res = lines.map {
-            val (p1, outcome) = it.split(" ").map { s ->  s.first() }
-            val p2 = chooseHand(PlayerOne of p1, Outcome of outcome)
-            calculateOutcome(PlayerOne of p1, p2)
-        }
-
-        return res.sum()
-    }
-
-    val testInput = readInput("Day02_test")
+    val testInput = readInput("day02/test")
     check(part1(testInput) == 15)
     check(part2(testInput) == 12)
 
-    val input = readInput("Day02")
+    val input = readInput("day02/input")
     println("Part 1: ${part1(input)}")
     println("Part 2: ${part2(input)}")
 }

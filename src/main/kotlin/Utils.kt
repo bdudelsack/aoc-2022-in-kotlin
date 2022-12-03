@@ -12,6 +12,9 @@ fun readInput(name: String) = File("src/main/kotlin", "$name.txt").readLines()
  */
 fun String.md5(): String = BigInteger(1, MessageDigest.getInstance("MD5").digest(toByteArray())).toString(16)
 
+
+fun<T> checkResult(result: T, expected: T) = check(result == expected) { "Check failed. Expected '$expected' got '$result'." }
+
 /**
  * Generic 2D Map Class
  */
