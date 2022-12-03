@@ -13,8 +13,8 @@ fun part2(lines: List<String>): Int {
 
 fun main() {
     val testInput = readInput("dayXX/test")
-    checkResult(part1(testInput), 157)
-    checkResult(part2(testInput), 70)
+    checkResult(part1(testInput), 0)
+    checkResult(part2(testInput), 0)
 
     val input = readInput("dayXX/input")
     println("Part 1: ${part1(input)}")
