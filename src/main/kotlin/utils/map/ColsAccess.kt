@@ -12,6 +12,8 @@ class ColsAccess<T>(private val map: Map2D<T>): Iterable<Col<T>> {
 }
 
 class Col<T>(private val map: Map2D<T>, private val x: Int): Iterable<T> {
+    val size get() = map.height
+
     operator fun get(y: Int): T {
         return map[x,y]
     }
@@ -23,32 +25,11 @@ class Col<T>(private val map: Map2D<T>, private val x: Int): Iterable<T> {
     }
 }
 
-class ColsIterator<T>(private val map: Map2D<T>): ListIterator<Col<T>> {
-    private var x = -1
-    override fun hasNext(): Boolean = x < map.width - 1
-    override fun hasPrevious(): Boolean = x > 0
-
-    override fun next(): Col<T> {
-        return map.cols[++x]
-    }
-
-    override fun previous(): Col<T> {
-        return map.cols[--x]
-    }
-
-    override fun previousIndex(): Int  = x - 1
-    override fun nextIndex(): Int = x + 1
+class ColsIterator<T>(private val map: Map2D<T>): IndexedIterator<Col<T>>(map.width - 1) {
+    override fun get(i: Int): Col<T> = map.cols[i]
 }
 
-class ColIterator<T>(private val map: Map2D<T>, private val x: Int): ListIterator<T> {
-    private var y = -1
+class ColIterator<T>(private val map: Map2D<T>, private val x: Int): IndexedIterator<T>(map.height - 1) {
+    override fun get(i: Int): T = map[x, i]
 
-    override fun hasNext(): Boolean = y < map.height - 1
-    override fun hasPrevious(): Boolean = y > 0
-
-    override fun next() = map[x, ++y]
-    override fun previous() = map[x, --y]
-
-    override fun nextIndex() = y + 1
-    override fun previousIndex() = y - 1
 }

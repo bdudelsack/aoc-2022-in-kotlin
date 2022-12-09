@@ -13,12 +13,11 @@ fun part1(lines: List<String>): Int {
     val rows = map.rows
     val cols = map.cols
 
-
     for(y in 1 until map.height - 1) {
-        val row = rows[y].toList()
+        val row = rows[y]
         for(x in 1 until map.width - 1) {
-            val l = row.subList(0, x)
-            val r = row.subList(x + 1, row.size)
+            val l = row[0..x]
+            val r = row[x + 1 .. row.size]
             val h = row[x]
 
             val visible = l.all { it < h } || r.all { it < h }
@@ -28,11 +27,11 @@ fun part1(lines: List<String>): Int {
     }
 
     for(x in 1 until map.width - 1) {
-        val col = cols[x].toList()
+        val col = cols[x]
         for(y in 1 until map.height - 1) {
             if(visMap[x,y] == 0) {
-                val t = col.subList(0, y)
-                val b = col.subList(y + 1, col.size)
+                val t = col[0 .. y]
+                val b = col[y + 1 .. col.size]
                 val h = col[y]
 
                 val visible = t.all { it < h } || b.all { it < h }
@@ -48,31 +47,29 @@ fun part1(lines: List<String>): Int {
 fun part2(lines: List<String>): Int {
     val map = Map2D.readFromLines(lines) { c, _, _ -> c }
 
-    val rows = map.rows()
-    val cols = map.cols()
 
     fun score(x: Int, y: Int): Int {
-        val row = rows[y].toList()
-        val col = cols[x].toList()
+        val row = map.rows[y]
+        val col = map.cols[x]
         val h = map[x,y]
 
         // Right
-        val r = if(x <= row.size) row.subList(x + 1, row.size) else emptyList()
+        val r = if(x <= row.size) row[x + 1 .. row.size] else emptyList()
         val rIndex = r.indexOfFirst { it >= h }
         val rScore = if(rIndex == -1) r.size else rIndex + 1
 
         // Left
-        val l = if(x <= row.size) row.subList(0, x).reversed() else emptyList()
+        val l = if(x <= row.size) row[0 .. x].reversed() else emptyList()
         val lIndex = l.indexOfFirst { it >= h }
         val lScore = if(lIndex == -1) l.size else lIndex + 1
 
         // Bottom
-        val b = if(y <= col.size) col.subList(y + 1, col.size) else emptyList()
+        val b = if(y <= col.size) col[y + 1 .. col.size] else emptyList()
         val bIndex = b.indexOfFirst { it >= h }
         val bScore = if(bIndex == -1) b.size else bIndex + 1
 
         // Top
-        val t = if(y <= col.size) col.subList(0, y).reversed() else emptyList()
+        val t = if(y <= col.size) col[0 .. y].reversed() else emptyList()
         val tIndex = t.indexOfFirst { it >= h }
         val tScore = if(tIndex == - 1) t.size else tIndex + 1
 

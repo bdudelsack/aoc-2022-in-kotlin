@@ -5,43 +5,31 @@ class RowsAccess<T>(private val map: Map2D<T>): Iterable<Row<T>> {
     operator fun get(y: Int) = Row(map, y)
     override fun iterator(): Iterator<Row<T>> = RowsIterator(map)
     fun listIterator(): ListIterator<Row<T>> = RowsIterator(map)
+
+    operator fun get(range: IntRange): List<Row<T>> {
+        return toList().subList(range.first, range.last)
+    }
 }
 
 class Row<T>(private val map: Map2D<T>, private val y: Int): Iterable<T> {
+    val size get() = map.width
+
     operator fun get(x: Int): T {
         return map[x,y]
     }
 
     override fun iterator(): Iterator<T> = RowIterator(map, y)
-}
 
-class RowsIterator<T>(private val map: Map2D<T>): ListIterator<Row<T>> {
-    private var y = -1
-    override fun hasNext(): Boolean = y < map.height - 1
-    override fun hasPrevious(): Boolean = y > 0
-
-    override fun next(): Row<T> {
-        return map.rows[++y]
+    operator fun get(range: IntRange): List<T> {
+        return toList().subList(range.first, range.last)
     }
-
-    override fun previous(): Row<T> {
-        return map.rows[--y]
-    }
-
-    override fun previousIndex(): Int  = y - 1
-
-    override fun nextIndex(): Int = y + 1
 }
 
-class RowIterator<T>(private val map: Map2D<T>, private val y: Int): ListIterator<T> {
-    private var x = -1;
-
-    override fun hasNext(): Boolean = x < map.width - 1
-    override fun hasPrevious(): Boolean = x > 0
-
-    override fun next() = map[++x, y]
-    override fun previous() = map[--x, y]
-
-    override fun nextIndex() = x + 1
-    override fun previousIndex() = x - 1
+class RowsIterator<T>(private val map: Map2D<T>): IndexedIterator<Row<T>>(map.height - 1) {
+    override fun get(i: Int): Row<T> = map.rows[i]
 }
+
+class RowIterator<T>(private val map: Map2D<T>, private val y: Int) : IndexedIterator<T>(map.width -1) {
+    override fun get(i: Int): T = map[i, y]
+}
+
