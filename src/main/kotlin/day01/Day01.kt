@@ -1,6 +1,6 @@
 package day01
 
-import readInput
+import utils.readInput
 
 fun part1(lines: List<String>): Int {
     val elves = readCalories(lines)

@@ -1,20 +1,21 @@
 package day08
 
-import Map2D
-import checkResult
-import readInput
+import utils.map.Map2D
+import utils.checkResult
+import utils.readInput
 
 fun part1(lines: List<String>): Int {
     val map = Map2D.readFromLines(lines) { c, _, _ -> c }
-    val visMap = Map2D.create(map.width, map.height) { x,y ->
+    val visMap = Map2D.create(map.width, map.height) { x, y ->
         if(x == 0 || y == 0 || x == map.width - 1 || y == map.height -1 ) { 1 } else { 0 }
     }
 
-    val rows = map.rows()
-    val cols = map.cols()
+    val rows = map.rows
+    val cols = map.cols
+
 
     for(y in 1 until map.height - 1) {
-        val row = rows[y]
+        val row = rows[y].toList()
         for(x in 1 until map.width - 1) {
             val l = row.subList(0, x)
             val r = row.subList(x + 1, row.size)
@@ -27,7 +28,7 @@ fun part1(lines: List<String>): Int {
     }
 
     for(x in 1 until map.width - 1) {
-        val col = cols[x]
+        val col = cols[x].toList()
         for(y in 1 until map.height - 1) {
             if(visMap[x,y] == 0) {
                 val t = col.subList(0, y)
@@ -51,8 +52,8 @@ fun part2(lines: List<String>): Int {
     val cols = map.cols()
 
     fun score(x: Int, y: Int): Int {
-        val row = rows[y]
-        val col = cols[x]
+        val row = rows[y].toList()
+        val col = cols[x].toList()
         val h = map[x,y]
 
         // Right

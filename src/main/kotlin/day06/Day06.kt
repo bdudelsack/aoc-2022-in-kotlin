@@ -1,7 +1,7 @@
 package day06
 
-import checkResult
-import readInput
+import utils.checkResult
+import utils.readInput
 
 fun part1(line: String, size: Int = 4): Int {
     val res = line.toCharArray().asSequence().windowed(size).withIndex().first {

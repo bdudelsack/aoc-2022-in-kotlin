@@ -1,7 +1,7 @@
 package day04
 
-import checkResult
-import readInput
+import utils.checkResult
+import utils.readInput
 
 fun parseInput(lines: List<String>): List<Pair<IntRange, IntRange>> {
     return lines.map { line ->

@@ -1,3 +1,7 @@
+package utils.map
+
+import utils.Point
+
 /**
  * Generic 2D Map Class
  */
@@ -5,6 +9,9 @@ class Map2D<T>(initData: List<List<T>>): Iterable<T> {
     private val data = initData.map { it.toMutableList() }.toMutableList()
     val height: Int get() = data.size
     val width: Int get() = data.first().size
+
+    val rows get() = RowsAccess(this)
+    val cols get() = ColsAccess(this)
 
     operator fun get(pt: Point) = this[pt.x, pt.y]
     operator fun get(x: Int, y: Int) = data[y][x]
@@ -54,41 +61,7 @@ class Map2D<T>(initData: List<List<T>>): Iterable<T> {
         }
     }
 
-    override fun iterator(): Iterator<T> = Map2DIterator(this)
+    override fun iterator(): Iterator<T> = MapIterator(this)
+    fun indexedIterator() = MapIndexedIterator(this)
 }
 
-class Map2DIterator<T>(private val map: Map2D<T>): Iterator<T> {
-    private var x: Int = 0
-    private var y: Int = 0
-
-    override fun hasNext(): Boolean {
-        return x < map.width && y < map.height
-    }
-
-    override fun next(): T {
-        val c: T = map[x,y]
-        if(++x == map.width) {
-            x = 0
-            y++
-        }
-        return c
-    }
-}
-
-class RowsAccess<T>(private val map: Map2D<T>) {
-    val size: Int get() = map.height
-    operator fun get(y: Int) = buildList {
-        for(x in 0 until map.width) {
-            add(map[x,y])
-        }
-    }
-}
-
-class ColsAccess<T>(private val map: Map2D<T>) {
-    val size: Int get() = map.width
-    operator fun get(x: Int) = buildList {
-        for(y in 0 until map.height) {
-            add(map[x,y])
-        }
-    }
-}

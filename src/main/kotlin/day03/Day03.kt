@@ -1,7 +1,7 @@
 package day03
 
-import checkResult
-import readInput
+import utils.checkResult
+import utils.readInput
 
 @JvmInline
 value class Item(private val char: Char) {

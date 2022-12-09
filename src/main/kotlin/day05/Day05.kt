@@ -1,7 +1,7 @@
 package day05
 
-import checkResult
-import readInput
+import utils.checkResult
+import utils.readInput
 
 lateinit var stacks: ArrayList<List<Char>>
 lateinit var commands: List<MoveCommand>

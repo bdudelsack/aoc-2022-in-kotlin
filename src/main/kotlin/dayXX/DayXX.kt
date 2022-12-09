@@ -1,7 +1,7 @@
 package dayXX
 
-import checkResult
-import readInput
+import utils.checkResult
+import utils.readInput
 
 fun part1(lines: List<String>): Int {
     return 0

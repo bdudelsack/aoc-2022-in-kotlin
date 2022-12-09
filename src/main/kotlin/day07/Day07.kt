@@ -1,7 +1,7 @@
 package day07
 
-import checkResult
-import readInput
+import utils.checkResult
+import utils.readInput
 
 data class FSNode(
     val name: String = "/",

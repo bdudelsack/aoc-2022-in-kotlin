@@ -1,6 +1,6 @@
 package day02
 
-import readInput
+import utils.readInput
 
 enum class PlayerOne(val hand: Char) {
     ROCK('A'),
