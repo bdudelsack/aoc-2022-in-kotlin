@@ -3,6 +3,7 @@ package utils
 import java.io.File
 import java.math.BigInteger
 import java.security.MessageDigest
+import kotlin.math.abs
 
 /**
  * Reads lines from the given input txt file.
@@ -18,12 +19,23 @@ fun String.md5(): String = BigInteger(1, MessageDigest.getInstance("MD5").digest
 fun<T> checkResult(result: T, expected: T) = check(result == expected) { "Check failed. Expected '$expected' got '$result'." }
 
 data class Point(val x: Int, val y: Int) {
-
     companion object {
         fun fromString(input: String): Point {
             val (x, y) = input.trim().split(",").map { it.toInt() }
             return Point(x, y)
         }
+    }
+
+    operator fun plus(pt: Point): Point {
+        return Point(x + pt.x , y + pt.y)
+    }
+
+    operator fun minus(pt: Point): Point {
+        return Point(x - pt.x, y - pt.y)
+    }
+
+    fun dist(pt: Point): Point {
+        return Point(abs(x - pt.x), abs(y - pt.y))
     }
 }
 
