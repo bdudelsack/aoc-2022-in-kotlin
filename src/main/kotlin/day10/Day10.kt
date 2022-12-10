@@ -4,10 +4,14 @@ import utils.checkResult
 import utils.readInput
 import kotlin.math.abs
 
-class Device {
-    val listX = mutableListOf(1)
+class Device(lines: List<String>) {
+    private val listX = mutableListOf(1)
 
-    fun exec(line: String) {
+    init {
+        lines.forEach { exec(it) }
+    }
+
+    private fun exec(line: String) {
         if (line == "noop") {
             listX.add(listX.last())
         } else {
@@ -26,32 +30,26 @@ class Device {
 
         return values.sumOf { it.first * it.second }
     }
+
+    fun display() {
+        for (c in 0 until 40 * 6) {
+            val x = c % 40
+
+            print(if (abs(listX[c] - x) <= 1) "#" else " ")
+
+            if (x == 39) { println() }
+        }
+    }
 }
 
 fun part1(lines: List<String>): Int {
-    val device = Device()
-    lines.forEach { line ->
-        device.exec(line)
-    }
-
+    val device = Device(lines)
     return device.signalStrength()
 }
 
 fun part2(lines: List<String>): Int {
-    val device = Device()
-    lines.forEach { line ->
-        device.exec(line)
-    }
-
-    for (c in 0 until 40 * 6) {
-        val x = c % 40
-
-        print(if (abs(device.listX[c] - x) <= 1) "#" else " ")
-
-        if (x == 39) {
-            println()
-        }
-    }
+    val device = Device(lines)
+    device.display()
 
     return 0
 }
