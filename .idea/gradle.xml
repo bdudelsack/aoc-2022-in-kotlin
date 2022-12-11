@@ -11,7 +11,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/solutions" />
-            <option value="$PROJECT_DIR$/visualisation" />
+            <option value="$PROJECT_DIR$/visualization" />
           </set>
         </option>
       </GradleProjectSettings>
