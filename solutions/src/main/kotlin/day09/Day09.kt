@@ -2,7 +2,6 @@ package day09
 
 import utils.Point
 import utils.checkResult
-import utils.map.Map2D
 import utils.readInput
 import kotlin.math.sign
 

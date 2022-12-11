@@ -5,7 +5,7 @@ import utils.readInput
 import kotlin.math.abs
 
 class Device(lines: List<String>) {
-    private val listX = mutableListOf(1)
+    val listX = mutableListOf(1)
 
     init {
         lines.forEach { exec(it) }
@@ -32,12 +32,16 @@ class Device(lines: List<String>) {
     }
 
     fun display() {
+        for((i,b) in bits().withIndex()) {
+            if(i % 40 == 0) println()
+            print(if(b) "#" else ".")
+        }
+    }
+
+    fun bits() = buildList {
         for (c in 0 until 40 * 6) {
             val x = c % 40
-
-            print(if (abs(listX[c] - x) <= 1) "#" else " ")
-
-            if (x == 39) { println() }
+            add(abs(listX[c] - x) <= 1)
         }
     }
 }
