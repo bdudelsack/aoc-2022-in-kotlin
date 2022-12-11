@@ -59,4 +59,4 @@ pluginManagement {
     }
 }
 
-include(":solutions", ":visualisation")
+include(":solutions", ":visualization")
