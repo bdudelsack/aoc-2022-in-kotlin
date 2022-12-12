@@ -46,6 +46,10 @@ class Map2D<T>(initData: List<List<T>>): Iterable<T> {
         }
     }
 
+    fun findPoint(predicate: (T) -> Boolean): Point {
+        return indexedIterator().asSequence().first { predicate(it.second) }.first
+    }
+
     fun rows() = RowsAccess(this)
     fun cols() = ColsAccess(this)
 

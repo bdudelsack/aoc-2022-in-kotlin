@@ -8,8 +8,6 @@ import org.openrndr.draw.Drawer
 import org.openrndr.draw.isolatedWithTarget
 import org.openrndr.draw.renderTarget
 import org.openrndr.extra.timer.repeat
-import org.openrndr.extra.videoprofiles.gif
-import org.openrndr.ffmpeg.ScreenRecorder
 import org.openrndr.shape.Rectangle
 import utils.readInput
 
@@ -114,9 +112,9 @@ fun main() = application {
         val display = Display()
         val sprite = Sprite(this.height.toDouble())
 
-        extend(ScreenRecorder()) {
-            gif()
-        }
+//        extend(ScreenRecorder()) {
+//            gif()
+//        }
 
         repeat(delay / 1000.0, 40*6) {
             val spriteX = device.listX[index+1]
