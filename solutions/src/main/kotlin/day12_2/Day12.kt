@@ -43,14 +43,15 @@ class Day12_2Solver(heightMap: Map2D<Char>) {
                 val targetWeight = waypoints[from]!!.weight + 1
 
                 directions.forEach { to ->
-                    if(map[to] == 0) {
-                        queue = emptyList()
-                        solution = Pair(to, targetWeight)
-                        return
-                    }
-
                     if(waypoints[to] == null || waypoints[to]!!.weight > targetWeight) {
                         waypoints[to] = Waypoint(targetWeight, from)
+
+                        if(map[to] == 0) {
+                            queue = emptyList()
+                            solution = Pair(to, targetWeight)
+                            return
+                        }
+
                         add(to)
                     }
                 }

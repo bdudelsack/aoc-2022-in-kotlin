@@ -1,5 +1,6 @@
 package day12_2
 
+import kotlinx.coroutines.yield
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
 import org.openrndr.draw.Drawer
@@ -10,12 +11,14 @@ import org.openrndr.extra.color.palettes.colorSequence
 import org.openrndr.extra.color.presets.BROWN
 import org.openrndr.extra.color.presets.DARK_BLUE
 import org.openrndr.extra.color.presets.DARK_GREEN
-import org.openrndr.extra.timer.repeat
+import org.openrndr.extra.compositor.compose
+import org.openrndr.extra.compositor.draw
+import org.openrndr.extra.compositor.layer
 import org.openrndr.extra.videoprofiles.gif
-import org.openrndr.extra.videoprofiles.h265
-import org.openrndr.extra.videoprofiles.prores
 import org.openrndr.ffmpeg.ScreenRecorder
+import org.openrndr.launch
 import org.openrndr.shape.Rectangle
+import utils.Point
 import utils.map.Map2D
 import utils.readInput
 
@@ -26,9 +29,9 @@ fun main() = application {
     }
 
     program {
-//        extend(ScreenRecorder()) {
-//            gif()
-//        }
+        extend(ScreenRecorder()) {
+            gif()
+        }
 
         val testInput = readInput("day12/input")
         val heightMap = Map2D.readFromLines(testInput) { c, _, _ -> c }
@@ -82,48 +85,95 @@ fun main() = application {
             }
         }
 
-        class WaypointsDrawer(map: Map2D<Day12_2Solver.Waypoint?>, gridW: Double = 20.0, gridH: Double = 20.0): AbstractMapDrawer<Day12_2Solver.Waypoint?>(map, gridW, gridH) {
-            override fun drawCell(drawer: Drawer, rect: Rectangle, value: Day12_2Solver.Waypoint?) {
-                value?.run {
-                    drawer.stroke = null
-                    drawer.fill = ColorRGBa.BLACK
-                    drawer.circle(rect.center, 2.0)
-                }
-            }
-        }
-
-
         val mapTexture = renderTarget(width, height) {
             colorBuffer()
         }
 
-        val mapDrawer =
-            HeightMapDrawer(heightMap, width.toDouble() / heightMap.width, height.toDouble() / heightMap.height)
+        val waypointsTexture = renderTarget(width, height) {
+            colorBuffer()
+        }
 
-        val waypointsDrawer = WaypointsDrawer(solver.waypoints, width.toDouble() / heightMap.width, height.toDouble() / heightMap.height)
+        val pathTexture = renderTarget(width, height) {
+            colorBuffer()
+        }
+
+        val gridW = width.toDouble() / heightMap.width
+        val gridH = height.toDouble() / heightMap.height
+        val mapDrawer =
+            HeightMapDrawer(heightMap, gridW, gridH)
 
         drawer.isolatedWithTarget(mapTexture) {
             mapDrawer.draw(this)
         }
 
-        repeat(0.04) {
-            if(solver.queue.isNotEmpty()) {
+        launch {
+            while(solver.queue.isNotEmpty()) {
                 solver.step()
+
+                drawer.isolatedWithTarget(waypointsTexture) {
+                    solver.queue.forEach { pt ->
+                        fill = ColorRGBa.BLACK
+                        stroke = null
+                        circle(pt.x * gridW + gridW / 2.0,pt.y * gridW + gridW / 2,2.0)
+                    }
+                }
+
+                yield()
+            }
+        }
+
+        launch {
+            while(solver.solution == null) { yield() }
+
+            val path = buildList<Point>{
+                var currentPoint: Point? = solver.solution!!.first
+                while(currentPoint != null) {
+                    add(currentPoint)
+                    currentPoint = solver.waypoints[currentPoint]?.prev
+                }
             }
 
-            drawer.isolatedWithTarget(mapTexture) {
-                waypointsDrawer.draw(this)
+            path.forEach {
+                val rect = mapDrawer.rect(it.x, it.y)
 
-                if(solver.solution != null) {
-                    stroke = null
+                drawer.isolatedWithTarget(pathTexture) {
                     fill = ColorRGBa.RED
-                    rectangle(waypointsDrawer.rect(solver.solution!!.first.x, solver.solution!!.first.y))
+                    stroke = null
+                    rectangle(rect)
+                }
+
+                yield()
+            }
+
+            println("FINISH")
+        }
+
+        val composite = compose {
+            draw {
+                drawer.clear(ColorRGBa.BLACK)
+            }
+
+            layer {
+                draw {
+                    drawer.image(mapTexture.colorBuffer(0))
+                }
+            }
+
+            layer {
+                draw {
+                    drawer.image(waypointsTexture.colorBuffer(0))
+                }
+            }
+
+            layer {
+                draw {
+                    drawer.image(pathTexture.colorBuffer(0))
                 }
             }
         }
 
         extend {
-            drawer.image(mapTexture.colorBuffer(0))
+            composite.draw(drawer)
         }
     }
 }
