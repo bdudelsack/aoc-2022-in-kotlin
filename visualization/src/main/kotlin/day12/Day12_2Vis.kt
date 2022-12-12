@@ -26,9 +26,9 @@ fun main() = application {
     }
 
     program {
-        extend(ScreenRecorder()) {
-            prores()
-        }
+//        extend(ScreenRecorder()) {
+//            gif()
+//        }
 
         val testInput = readInput("day12/input")
         val heightMap = Map2D.readFromLines(testInput) { c, _, _ -> c }
