@@ -1,6 +1,8 @@
 package day12_2
 
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.yield
+import org.openrndr.PresentationMode
 import org.openrndr.application
 import org.openrndr.color.ColorRGBa
 import org.openrndr.draw.Drawer
@@ -21,6 +23,8 @@ import org.openrndr.shape.Rectangle
 import utils.Point
 import utils.map.Map2D
 import utils.readInput
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.microseconds
 
 fun main() = application {
     configure {
@@ -29,9 +33,11 @@ fun main() = application {
     }
 
     program {
-        extend(ScreenRecorder()) {
-            gif()
-        }
+//        extend(ScreenRecorder()) {
+//            gif()
+//        }
+
+        window.presentationMode = PresentationMode.MANUAL
 
         val testInput = readInput("day12/input")
         val heightMap = Map2D.readFromLines(testInput) { c, _, _ -> c }
@@ -118,6 +124,7 @@ fun main() = application {
                     }
                 }
 
+                window.requestDraw()
                 yield()
             }
         }
@@ -131,7 +138,7 @@ fun main() = application {
                     add(currentPoint)
                     currentPoint = solver.waypoints[currentPoint]?.prev
                 }
-            }
+            }.reversed()
 
             path.forEach {
                 val rect = mapDrawer.rect(it.x, it.y)
@@ -142,6 +149,7 @@ fun main() = application {
                     rectangle(rect)
                 }
 
+                window.requestDraw()
                 yield()
             }
 
